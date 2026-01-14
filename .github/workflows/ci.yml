@@ -40,7 +40,9 @@ jobs:
       run: ./vendor/bin/phpstan analyse
 
     - name: Run migrations
-      run: php artisan migrate --force
+      run: |
+        php artisan config:clear
+        php artisan migrate --force
       env:
         DB_DATABASE: testing
 
