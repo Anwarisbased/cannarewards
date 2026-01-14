@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Tenant;
 use App\Models\Tenant\CommercialGood;
-use App\Models\Tenant\RewardItem;
+use App\Models\Tenant\RewardCode;
 use Illuminate\Database\Seeder;
 
 class RealWorldSeeder extends Seeder
@@ -42,7 +42,7 @@ class RealWorldSeeder extends Seeder
         // Create 50 products for Dime
         for ($i = 1; $i <= 50; $i++) {
             CommercialGood::create([
-                'sku' => 'DIME-'.str_pad($i, 3, '0', STR_PAD_LEFT),
+                'sku' => 'DIME-'.str_pad((string) $i, 3, '0', STR_PAD_LEFT),
                 'name' => 'Dime Product #'.$i,
                 'points_awarded' => rand(50, 200),
                 'msrp_cents' => rand(500, 5000),
@@ -56,7 +56,7 @@ class RealWorldSeeder extends Seeder
         $ranks = ['member' => 0, 'silver' => 500, 'gold' => 2000, 'rose_gold' => 10000];
 
         foreach ($ranks as $rank => $threshold) {
-            RewardItem::create([
+            RewardCode::create([
                 'name' => ucfirst($rank).' Tier Reward',
                 'points_cost' => $threshold,
                 'cost_basis_cents' => 0,
@@ -97,7 +97,7 @@ class RealWorldSeeder extends Seeder
         // Create 10 products for Cookies
         for ($i = 1; $i <= 10; $i++) {
             CommercialGood::create([
-                'sku' => 'COOK-'.str_pad($i, 3, '0', STR_PAD_LEFT),
+                'sku' => 'COOK-'.str_pad((string) $i, 3, '0', STR_PAD_LEFT),
                 'name' => 'Cookies Product #'.$i,
                 'points_awarded' => rand(75, 150),
                 'msrp_cents' => rand(1000, 8000),
@@ -111,7 +111,7 @@ class RealWorldSeeder extends Seeder
         $cookieRanks = ['scout' => 0, 'leader' => 1000];
 
         foreach ($cookieRanks as $rank => $threshold) {
-            RewardItem::create([
+            RewardCode::create([
                 'name' => ucfirst($rank).' Tier Reward',
                 'points_cost' => $threshold,
                 'cost_basis_cents' => 0,
