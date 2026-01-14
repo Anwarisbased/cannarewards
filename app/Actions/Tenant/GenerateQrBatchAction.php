@@ -10,7 +10,7 @@ use League\Csv\Writer;
 
 class GenerateQrBatchAction
 {
-    public function execute(CommercialGood $product, int $quantity, string $batchLabel, string $disk = null): string
+    public function execute(CommercialGood $product, int $quantity, string $batchLabel, ?string $disk = null): string
     {
         // 1. Setup CSV Writer with a temporary memory stream
         $csv = Writer::createFromPath('php://temp', 'r+');
