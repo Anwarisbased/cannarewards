@@ -66,15 +66,19 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '20'
+        cache: 'pnpm'
 
-    - name: Install npm dependencies
-      run: npm ci
+    - name: Install pnpm
+      run: npm install -g pnpm
+
+    - name: Install dependencies
+      run: pnpm install
 
     - name: Run frontend linting
-      run: npm run lint
+      run: pnpm run lint
 
     - name: Build frontend
-      run: npm run build
+      run: pnpm run build
 
     - name: Run Lighthouse CI check
       run: |
