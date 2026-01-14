@@ -22,8 +22,15 @@ interface TenantConfig {
     };
 }
 
+interface User {
+    id: number;
+    name: string;
+    email: string;
+    // Add other user properties as needed
+}
+
 interface AuthProps {
-    user?: any;
+    user?: User;
     tenant?: {
         id: string;
         config: TenantConfig;
@@ -32,6 +39,10 @@ interface AuthProps {
 
 export default function AppLayout({ children, title = 'CannaRewards' }: AppLayoutProps) {
     const { props } = usePage<{ auth?: AuthProps }>();
+
+    useEffect(() => {
+        document.title = title;
+    }, [title]);
 
     useEffect(() => {
         if (props.auth?.tenant?.config?.theme) {
