@@ -41,6 +41,8 @@ jobs:
 
     - name: Run migrations
       run: php artisan migrate --force
+      env:
+        DB_DATABASE: testing
 
     - name: Run tests
       run: php artisan test
