@@ -69,7 +69,7 @@ jobs:
         cache: 'pnpm'
 
     - name: Install pnpm
-      run: npm install -g pnpm
+      run: npm i -g pnpm@latest
 
     - name: Install dependencies
       run: pnpm install
