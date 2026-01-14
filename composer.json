@@ -6,7 +6,7 @@
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "filament/filament": "^3.2",
         "inertiajs/inertia-laravel": "^2.0",
         "laravel/framework": "^12.0",
@@ -14,7 +14,12 @@
         "league/csv": "^9.28",
         "spatie/laravel-data": "^4.18",
         "stancl/tenancy": "^3.9",
-        "tightenco/ziggy": "^2.6"
+        "tightenco/ziggy": "^2.6",
+        "symfony/string": "^7.0",
+        "symfony/translation": "^7.0",
+        "symfony/event-dispatcher": "^7.0",
+        "symfony/css-selector": "^7.0",
+        "symfony/clock": "^7.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
