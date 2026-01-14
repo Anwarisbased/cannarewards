@@ -41,8 +41,9 @@ jobs:
 
     - name: Run migrations
       run: |
+        php artisan cache:clear
         php artisan config:clear
-        php artisan migrate --force
+        php artisan migrate:fresh --force
       env:
         DB_DATABASE: testing
 
