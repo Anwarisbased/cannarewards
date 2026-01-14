@@ -39,6 +39,9 @@ jobs:
     - name: Run static analysis
       run: ./vendor/bin/phpstan analyse
 
+    - name: Run migrations
+      run: php artisan migrate --force
+
     - name: Run tests
       run: php artisan test
 
