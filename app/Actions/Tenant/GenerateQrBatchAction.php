@@ -10,7 +10,7 @@ use League\Csv\Writer;
 
 class GenerateQrBatchAction
 {
-    public function execute(CommercialGood $product, int $quantity, string $batchLabel): string
+    public function execute(CommercialGood $product, int $quantity, string $batchLabel, string $disk = null): string
     {
         // 1. Setup CSV Writer with a temporary memory stream
         $csv = Writer::createFromPath('php://temp', 'r+');
@@ -57,9 +57,12 @@ class GenerateQrBatchAction
         // 5. Upload to storage (using local for development, s3 for production)
         $filename = 'export/batches/'.tenant('id')."/{$batchLabel}_".time().'.csv';
 
+        // Use provided disk or determine automatically
+        $storageDisk = $disk ?? $this->getStorageDisk();
+
         // Put the content of the stream into storage
         // We use string casting of the CSV object to get the content
-        Storage::disk($this->getStorageDisk())->put($filename, $csv->toString());
+        Storage::disk($storageDisk)->put($filename, $csv->toString());
 
         return $filename;
     }

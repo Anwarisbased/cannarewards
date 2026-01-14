@@ -59,7 +59,7 @@ class GenerateQrBatchActionTest extends TestCase
         $batchLabel = 'BATCH-TEST-001';
         $quantity = 50;
 
-        $filePath = $action->execute($good, $quantity, $batchLabel);
+        $filePath = $action->execute($good, $quantity, $batchLabel, 's3');
 
         // 4. Verification
 
