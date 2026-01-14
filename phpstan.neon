@@ -1,0 +1,40 @@
+# phpstan.neon
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: 5
+    paths:
+        - app/
+        - database/
+        - routes/
+        - tests/
+    excludePaths:
+        - config/
+        - public/
+        - resources/
+        - storage/
+        - vendor/
+    # Larastan-specific parameters only
+    checkOctaneCompatibility: false
+    noEnvCallsOutsideOfConfig: true
+    noModelMake: true
+    noUnnecessaryCollectionCall: true
+    noUnnecessaryCollectionCallOnly: []
+    noUnnecessaryCollectionCallExcept: []
+    noUnnecessaryEnumerableToArrayCalls: false
+    databaseMigrationsPath: []
+    disableMigrationScan: false
+    configDirectories: []
+    viewDirectories: []
+    translationDirectories: []
+    squashedMigrationsPath: []
+    disableSchemaScan: false
+    checkModelProperties: false
+    checkUnusedViews: false
+    checkMissingTranslations: false
+    checkModelAppends: true
+    checkModelMethodVisibility: false
+    generalizeEnvReturnType: false
+    checkConfigTypes: false
+    checkAuthCallsWhenInRequestScope: false

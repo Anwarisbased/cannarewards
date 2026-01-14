@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "jsx": "react-jsx",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "noEmit": true,
+        "paths": {
+            "@/*": ["./resources/js/*"],
+            "@/types/*": ["./resources/js/types/*"]
+        }
+    },
+    "include": [
+        "resources/js/**/*",
+        "resources/js/types/**/*",
+        "resources/js/types/*.d.ts"
+    ],
+    "exclude": ["node_modules", "public"]
+}

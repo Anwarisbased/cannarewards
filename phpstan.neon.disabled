@@ -1,0 +1,56 @@
+# phpstan.neon
+includes:
+    - ./vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: 5
+    paths:
+        - app/
+        - database/
+        - routes/
+        - tests/
+    excludePaths:
+        - config/
+        - public/
+        - resources/
+        - storage/
+        - vendor/
+    checkMissingIterableValueType: false
+    treatPhpDocTypesAsCertain: true
+    checkGenericClassInNonGenericObjectType: false
+    earlyTerminatingMethodCalls:
+        - - 'Illuminate\Support\Facades\Auth'
+          - [ 'logout' ]
+        - - 'Illuminate\Http\RedirectResponse'
+          - [ 'to', 'away', 'back' ]
+        - - 'Illuminate\Routing\Redirector'
+          - [ 'to', 'away', 'back' ]
+        - - 'Symfony\Component\HttpFoundation\RedirectResponse'
+          - [ 'to', 'away', 'back' ]
+    forbiddenFunctions:
+        - 'dd'
+        - 'dump'
+        - 'var_dump'
+        - 'var_export'
+        - 'debug_zval_dump'
+        - 'debug_print_backtrace'
+        - 'print_r'
+        - 'fwrite'
+        - 'echo'
+        - 'sprintf'
+    bootstrapFiles:
+        - ./vendor/larastan/larastan/bootstrap.php
+    # Larastan-specific parameters
+    checkOctaneCompatibility: false
+    noEnvCallsOutsideOfConfig: true
+    noModelMake: true
+    noUnnecessaryCollectionCall: true
+    noUnnecessaryEnumerableToArrayCalls: false
+    checkModelProperties: false
+    checkUnusedViews: false
+    checkMissingTranslations: false
+    checkModelAppends: true
+    checkModelMethodVisibility: false
+    generalizeEnvReturnType: false
+    checkConfigTypes: false
+    checkAuthCallsWhenInRequestScope: false
