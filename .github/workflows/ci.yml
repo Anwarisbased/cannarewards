@@ -39,11 +39,11 @@ jobs:
     - name: Run static analysis
       run: ./vendor/bin/phpstan analyse
 
-    - name: Run migrations
+    - name: Prepare and run migrations
       run: |
-        php artisan cache:clear
         php artisan config:clear
-        php artisan migrate:fresh --force
+        php artisan migrate:install
+        php artisan migrate --force
       env:
         DB_DATABASE: testing
 
