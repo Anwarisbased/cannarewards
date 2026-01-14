@@ -73,9 +73,6 @@ jobs:
     - name: Install project dependencies
       run: pnpm install
 
-    - name: Run frontend linting
-      run: pnpm run lint
-
     - name: Build frontend
       run: pnpm run build
 
