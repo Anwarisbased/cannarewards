@@ -46,6 +46,11 @@ jobs:
 
     - name: Run tests
       run: php artisan test
+      env:
+        DB_DATABASE: testing
+        DB_USERNAME: root
+        DB_PASSWORD: password
+        APP_KEY: base64:PUoYuJBsV9C9Ht/ZAOa32p43f6abOaQe61y8wBD7dyo=
 
   frontend-quality:
     runs-on: ubuntu-latest
