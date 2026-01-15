@@ -21,6 +21,11 @@ createInertiaApp({
             return route(...args, ziggyConfig);
         };
 
+        // Ensure Ziggy is available before continuing
+        if (typeof window.Ziggy === 'undefined') {
+            console.warn('Ziggy configuration not found. Routes may not work properly.');
+        }
+
         return root.render(<App {...props} />);
     },
     progress: {
