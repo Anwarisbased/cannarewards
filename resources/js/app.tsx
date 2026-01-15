@@ -3,7 +3,6 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { route } from 'ziggy-js';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -13,17 +12,17 @@ createInertiaApp({
     setup({ el, App, props }) {
         const root = createRoot(el);
 
-        // Make Ziggy's route function globally available
-        // The Ziggy configuration is provided by the @routes directive in the Blade template
-        window.route = (...args) => {
-            // Get the Ziggy configuration from the global window object
-            const ziggyConfig = window?.Ziggy || null;
-            return route(...args, ziggyConfig);
-        };
+        // Ziggy's route function should be available globally via the @routes directive in the Blade template
+        // If not available globally, we'll import it from the ziggy-js package
+        if (typeof window.route === 'undefined') {
+            // Dynamically import ziggy-js if not available globally
+            import('ziggy-js').then(({ route: ziggyRoute }) => {
+                // Get Ziggy configuration from the global object (set by @routes directive)
+                const ziggyConfig = typeof window.Ziggy !== 'undefined' ? window.Ziggy : undefined;
 
-        // Ensure Ziggy is available before continuing
-        if (typeof window.Ziggy === 'undefined') {
-            console.warn('Ziggy configuration not found. Routes may not work properly.');
+                // Make the route function available globally
+                window.route = (...args) => ziggyRoute(...args, ziggyConfig);
+            });
         }
 
         return root.render(<App {...props} />);
