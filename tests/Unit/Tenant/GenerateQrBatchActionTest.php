@@ -8,8 +8,8 @@ use App\Models\Tenant\CommercialGood;
 use App\Models\Tenant\RewardCode;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
-use Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class GenerateQrBatchActionTest extends TestCase
 {

@@ -4,8 +4,8 @@ namespace Tests\Unit\Tenant;
 
 use App\Models\Tenant;
 use App\Models\Tenant\CommercialGood;
-use Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class CommercialGoodTest extends TestCase
 {
