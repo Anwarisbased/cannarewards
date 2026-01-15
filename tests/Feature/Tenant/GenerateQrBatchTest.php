@@ -24,13 +24,28 @@ class GenerateQrBatchTest extends TestCase
             ]);
         }
 
+        // Create the tenant database if it doesn't exist
+        $tenantDatabaseName = 'tenant' . $tenant->getTenantKey();
+        $existingDatabase = DB::connection('mysql')->select("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?", [$tenantDatabaseName]);
+
+        if (empty($existingDatabase)) {
+            DB::connection('mysql')->statement("CREATE DATABASE IF NOT EXISTS `{$tenantDatabaseName}`");
+        }
+
         // Mock the S3 Storage disk
         Storage::fake('s3');
 
         // CRITICAL FIX: Force the config to set the tenant database
-        config(['database.connections.tenant.database' => 'tenant'.$tenant->getTenantKey()]);
+        config(['database.connections.tenant.database' => $tenantDatabaseName]);
         DB::purge('tenant');
         DB::reconnect('tenant');
+
+        // Run tenant migrations to ensure tables exist
+        \Illuminate\Support\Facades\Artisan::call('migrate', [
+            '--path' => 'database/migrations/tenant',
+            '--database' => 'tenant',
+            '--force' => true,
+        ]);
 
         // Create a CommercialGood inside that tenant
         $commercialGood = null;
