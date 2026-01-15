@@ -53,6 +53,9 @@ importers:
       tailwind-merge:
         specifier: ^3.4.0
         version: 3.4.0
+      ziggy-js:
+        specifier: ^2.6.0
+        version: 2.6.0
     devDependencies:
       '@eslint/js':
         specifier: ^9.39.2
@@ -1384,6 +1387,10 @@ packages:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
 
+  qs-esm@7.0.3:
+    resolution: {integrity: sha512-8jbjCR0PPbqoQcv83C2K/zvVeytRPwPpt3WPDbq51qyLAxcWGtXVRjSe6GHtLCoVbg9+NEFkv7GyUxqjcDIJzw==}
+    engines: {node: '>=18'}
+
   qs@6.14.1:
     resolution: {integrity: sha512-4EK3+xJl8Ts67nLYNwqw/dsFVnCf+qR7RgXSK9jEEm9unao3njwMDdmsdvoKBKHzxd7tCYz5e5M+SnMjdtXGQQ==}
     engines: {node: '>=0.6'}
@@ -1616,6 +1623,9 @@ packages:
   yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
+
+  ziggy-js@2.6.0:
+    resolution: {integrity: sha512-V6xeZKEG67xt5Qtli5nCpQrc5TXW/tf3dKu2QLJS2TCxe+xxo/5AusT7M3MwX4nNeSEKBJMIvVJz2dlt+ziWYQ==}
 
   zod-validation-error@4.0.2:
     resolution: {integrity: sha512-Q6/nZLe6jxuU80qb/4uJ4t5v2VEZ44lzQjPDhYJNztRQ4wyWc6VF3D3Kb/fAuPetZQnhS3hnajCf9CsWesghLQ==}
@@ -2806,6 +2816,8 @@ snapshots:
 
   punycode@2.3.1: {}
 
+  qs-esm@7.0.3: {}
+
   qs@6.14.1:
     dependencies:
       side-channel: 1.1.0
@@ -3022,6 +3034,10 @@ snapshots:
       yargs-parser: 21.1.1
 
   yocto-queue@0.1.0: {}
+
+  ziggy-js@2.6.0:
+    dependencies:
+      qs-esm: 7.0.3
 
   zod-validation-error@4.0.2(zod@4.3.5):
     dependencies:
