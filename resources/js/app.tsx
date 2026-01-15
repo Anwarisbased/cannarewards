@@ -3,7 +3,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { route } from '../../vendor/tightenco/ziggy/dist/index.js';
+import { route } from 'ziggy-js';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -14,7 +14,12 @@ createInertiaApp({
         const root = createRoot(el);
 
         // Make Ziggy's route function globally available
-        window.route = route;
+        // The Ziggy configuration is provided by the @routes directive in the Blade template
+        window.route = (...args) => {
+            // Get the Ziggy configuration from the global window object
+            const ziggyConfig = window?.Ziggy || null;
+            return route(...args, ziggyConfig);
+        };
 
         return root.render(<App {...props} />);
     },

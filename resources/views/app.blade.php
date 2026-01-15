@@ -11,6 +11,7 @@
         @endisset
 
         @vite(['resources/css/app.css'])
+        @routes
         @inertiaHead
     </head>
     <body class="font-sans antialiased">
