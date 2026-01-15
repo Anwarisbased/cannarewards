@@ -26,7 +26,7 @@ class GenerateQrBatchTest extends TestCase
 
         // Create the tenant database if it doesn't exist
         $tenantDatabaseName = 'tenant' . $tenant->getTenantKey();
-        $existingDatabase = DB::connection('mysql')->select("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?", [$tenantDatabaseName]);
+        $existingDatabase = DB::connection('mysql')->select('SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?', [$tenantDatabaseName]);
 
         if (empty($existingDatabase)) {
             DB::connection('mysql')->statement("CREATE DATABASE IF NOT EXISTS `{$tenantDatabaseName}`");
@@ -51,7 +51,7 @@ class GenerateQrBatchTest extends TestCase
         $commercialGood = null;
         $tenant->run(function () use (&$commercialGood) {
             $commercialGood = CommercialGood::create([
-                'sku' => 'TEST-SKU-'.uniqid(),
+                'sku' => 'TEST-SKU-' . uniqid(),
                 'name' => 'Test Product',
                 'points_awarded' => 100,
                 'msrp_cents' => 2000,
