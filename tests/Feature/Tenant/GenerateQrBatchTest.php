@@ -8,10 +8,11 @@ use App\Models\Tenant\CommercialGood;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class GenerateQrBatchTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function it_generates_batch_and_uploads_csv()
     {
         // Setup: Initialize a Tenant ('dime')

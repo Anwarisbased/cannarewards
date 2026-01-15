@@ -5,9 +5,11 @@ namespace Tests\Unit\Tenant;
 use App\Models\Tenant;
 use App\Models\Tenant\CommercialGood;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class CommercialGoodTest extends TestCase
 {
+    #[Test]
     public function test_commercial_good_can_be_created_in_tenant_context()
     {
         // Cleanup from previous runs (necessary because createDatabase causes implicit commit)

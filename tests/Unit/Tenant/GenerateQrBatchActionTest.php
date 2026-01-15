@@ -9,9 +9,11 @@ use App\Models\Tenant\RewardCode;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class GenerateQrBatchActionTest extends TestCase
 {
+    #[Test]
     public function test_it_generates_codes_and_uploads_csv()
     {
         // 1. Setup Tenant (using the fix from previous task)
