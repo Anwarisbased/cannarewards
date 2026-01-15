@@ -2,17 +2,18 @@
 
 namespace App\Models\Tenant;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Stancl\Tenancy\Database\Concerns\TenantConnection;
 
 class CommercialGood extends Model
 {
-    use HasFactory, TenantConnection;
+    use TenantConnection;
 
     protected $fillable = [
         'sku',
         'name',
+        'description',
         'points_awarded',
         'msrp_cents',
         'strain_type',
@@ -21,8 +22,13 @@ class CommercialGood extends Model
     ];
 
     protected $casts = [
+        'is_active' => 'boolean',
         'points_awarded' => 'integer',
         'msrp_cents' => 'integer',
-        'is_active' => 'boolean',
     ];
+
+    public function rewardCodes(): HasMany
+    {
+        return $this->hasMany(RewardCode::class, 'commercial_good_id');
+    }
 }

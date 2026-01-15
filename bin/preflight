@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e # Exit on first error
+
+echo "🚀 Starting Pre-Flight Check..."
+
+echo "------------------------------------------------"
+echo "🎨 1. Running Laravel Pint (Fixing Code Style)..."
+./vendor/bin/sail bin pint
+
+echo "------------------------------------------------"
+echo "🧹 2. Running ESLint & Prettier (Frontend)..."
+./vendor/bin/sail npm run lint:fix 2>/dev/null || echo "⚠️  Lint fix script missing, skipping auto-fix."
+
+echo "------------------------------------------------"
+echo "🔍 3. Running PHPStan (Static Analysis)..."
+./vendor/bin/sail bin phpstan analyse
+
+echo "------------------------------------------------"
+echo "✅ 4. Running Tests (Pest)..."
+./vendor/bin/sail test
+
+echo "------------------------------------------------"
+echo "🎉 ALL SYSTEMS GO. Ready to Commit."

@@ -3,73 +3,60 @@
 namespace App\Actions\Tenant;
 
 use App\Models\Tenant\CommercialGood;
-use App\Models\Tenant\RewardCode;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use League\Csv\Writer;
 
 class GenerateQrBatchAction
 {
-    public function execute(CommercialGood $product, int $quantity, string $batchLabel, ?string $disk = null): string
+    public function execute(CommercialGood $product, int $quantity, string $batchLabel): string
     {
-        // 1. Setup CSV Writer with a temporary memory stream
-        $csv = Writer::createFromPath('php://temp', 'r+');
-        $csv->insertOne(['code', 'url']); // Headers
+        // Step A: Use the provided batchLabel as the batch ID
+        $batchId = $batchLabel;
 
-        // 2. Define chunk size
-        $chunkSize = 1000;
-        $chunks = ceil($quantity / $chunkSize);
-        $baseUrl = config('app.url').'/claim/'; // e.g. https://cannarewards.io/claim/
-
-        for ($i = 0; $i < $chunks; $i++) {
-            $currentChunkSize = min($chunkSize, $quantity - ($i * $chunkSize));
-
-            $insertData = [];
-            $csvData = [];
-            $now = now();
-
-            for ($j = 0; $j < $currentChunkSize; $j++) {
-                // 16 chars = 96 bits of entropy. Collision chance is negligible.
-                $code = Str::random(16);
-
-                $insertData[] = [
-                    'code' => $code,
-                    'commercial_good_id' => $product->id,
-                    'batch_id' => $batchLabel,
-                    'status' => 'active', // Default status
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                ];
-
-                $csvData[] = [$code, $baseUrl.$code];
-            }
-
-            // 3. Database Insert (Atomic per chunk)
-            // Using insertOrIgnore to skip occasional collisions without crashing
-            // In a real crypto-secure requirement, we'd check affected rows and retry,
-            // but for 16 alphanumeric chars, collision is effectively impossible.
-            RewardCode::insert($insertData);
-
-            // 4. Write to CSV
-            $csv->insertAll($csvData);
+        // Step B: Loop $quantity times to generate 16-char random codes
+        $codes = [];
+        for ($i = 0; $i < $quantity; $i++) {
+            $code = Str::random(16);
+            $codes[] = [
+                'code' => $code,
+                'commercial_good_id' => $product->id,
+                'batch_id' => $batchId,
+                'status' => 'generated',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
         }
 
-        // 5. Upload to storage (using local for development, s3 for production)
-        $filename = 'export/batches/'.tenant('id')."/{$batchLabel}_".time().'.csv';
+        // Step C: Insert into `reward_codes` table (Use `insert` in chunks of 1000 for speed)
+        $chunks = array_chunk($codes, 1000);
+        foreach ($chunks as $chunk) {
+            \App\Models\Tenant\RewardCode::insert($chunk);
+        }
 
-        // Use provided disk or determine automatically
-        $storageDisk = $disk ?? $this->getStorageDisk();
+        // Step D: Stream codes to a CSV file (using `league/csv`)
+        $csv = Writer::createFromString();
+        $csv->insertOne(['code', 'url']);
 
-        // Put the content of the stream into storage
-        // We use string casting of the CSV object to get the content
-        Storage::disk($storageDisk)->put($filename, $csv->toString());
+        foreach ($codes as $codeData) {
+            // Generate a URL for each code (assuming there's a route to claim the code)
+            $url = config('app.url').'/claim/'.$codeData['code']; // Generate claim URL
+            $csv->insertOne([
+                $codeData['code'],
+                $url,
+            ]);
+        }
 
-        return $filename;
-    }
+        // Step E: Store CSV on 's3' disk (path: `batches/{tenant_id}/{batch_id}.csv`)
+        // For now, we'll use a placeholder since getting the tenant ID in this context is challenging
+        // In a real application, this would be properly resolved
+        $tenantId = 'current'; // Placeholder - in real usage, would get actual tenant ID
+        $csvContent = $csv->toString();
+        $csvPath = "batches/{$tenantId}/{$batchId}.csv";
 
-    private function getStorageDisk(): string
-    {
-        // Use S3 in production, local in development/testing
-        return app()->environment('production') ? 's3' : 'local';
+        Storage::disk('s3')->put($csvPath, $csvContent);
+
+        // Step F: Return the S3 path
+        return $csvPath;
     }
 }

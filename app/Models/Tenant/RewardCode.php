@@ -2,20 +2,19 @@
 
 namespace App\Models\Tenant;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Stancl\Tenancy\Database\Concerns\TenantConnection;
 
 class RewardCode extends Model
 {
-    use HasFactory, TenantConnection;
-
-    protected $primaryKey = 'code';
+    use TenantConnection;
 
     public $incrementing = false;
 
     protected $keyType = 'string';
+
+    protected $primaryKey = 'code';
 
     protected $fillable = [
         'code',
