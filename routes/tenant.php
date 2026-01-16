@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Scan\TeaserController;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
-use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
-
 /*
 |--------------------------------------------------------------------------
 | Tenant Routes
@@ -17,6 +16,8 @@ use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 | Feel free to customize them however you want. Good luck!
 |
 */
+
+use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 
 Route::middleware([
     'web',
@@ -30,4 +31,7 @@ Route::middleware([
     Route::get('/tenant-test', function () {
         return 'I am a Tenant';
     });
+
+    // The Soft Trap - Teaser Page
+    Route::get('/claim/{code}', TeaserController::class)->name('scan.teaser');
 });
