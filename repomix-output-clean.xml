@@ -177,7 +177,6 @@ README.md
 repomix.config.js
 repomix.config.ultra.js
 tailwind.config.js
-test_generate_qr_batch.php
 tsconfig.json
 vite.config.js
 </directory_structure>
@@ -211,6 +210,25 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+
+    # --- Node/Frontend Build Layer (Required for Inertia Tests) ---
+    - name: Install pnpm
+      uses: pnpm/action-setup@v3
+      with:
+        version: 9
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'pnpm'
+
+    - name: Install Node dependencies
+      run: pnpm install --frozen-lockfile
+
+    - name: Build Frontend Assets
+      run: pnpm run build
+    # ------------------------------------------------------------
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -251,16 +269,19 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Install pnpm
+      uses: pnpm/action-setup@v3
+      with:
+        version: 9
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '20'
-
-    - name: Install pnpm
-      run: npm install -g pnpm
+        cache: 'pnpm'
 
     - name: Install project dependencies
-      run: pnpm install
+      run: pnpm install --frozen-lockfile
 
     - name: Run frontend linting
       run: pnpm run lint
@@ -268,11 +289,9 @@ jobs:
     - name: Build frontend
       run: pnpm run build
 
-    - name: Run Lighthouse CI check
-      run: |
-        # This would run Lighthouse audit to ensure performance score > 90
-        # Implementation would depend on having a local server running
-        echo "Running Lighthouse audit..."
+    # Optional: Lighthouse check if you implement a local server runner
+    # - name: Run Lighthouse CI check
+    #   run: echo "Running Lighthouse audit..."
 </file>
 
 <file path="app/Actions/Tenant/GenerateQrBatchAction.php">
@@ -4928,7 +4947,7 @@ class TeaserTest extends TestCaseTenant
             'points_awarded' => 100,
             'msrp_cents' => 100,
             'strain_type' => 'hybrid',
-            'is_active' => true
+            'is_active' => true,
         ]);
 
         $code = RewardCode::create([
@@ -4951,7 +4970,7 @@ class TeaserTest extends TestCaseTenant
     #[Test]
     public function guest_sees_error_page_for_invalid_code()
     {
-        $response = $this->get("http://dime.localhost/claim/INVALIDCODE123");
+        $response = $this->get('http://dime.localhost/claim/INVALIDCODE123');
 
         $response->assertOk();
         $response->assertInertia(fn ($page) => $page
@@ -4999,7 +5018,7 @@ trait SetUpTenantTest
         $tenant = Tenant::firstOrCreate([
             'id' => $tenantId,
         ], [
-            'brand_name' => ucfirst($tenantId) . ' Industries',
+            'brand_name' => ucfirst($tenantId).' Industries',
             'plan' => 'enterprise',
         ]);
 
@@ -5015,7 +5034,7 @@ trait SetUpTenantTest
 
         // 3. Create the Physical Tenant Database
         // We use raw SQL to ensure it exists regardless of transaction state
-        $tenantDatabaseName = 'tenant' . $tenantId;
+        $tenantDatabaseName = 'tenant'.$tenantId;
         DB::connection('mysql')->statement("CREATE DATABASE IF NOT EXISTS `{$tenantDatabaseName}`");
 
         // 4. Run Migrations on the Tenant Database
@@ -5027,7 +5046,7 @@ trait SetUpTenantTest
         DB::purge('tenant');
         DB::reconnect('tenant');
 
-        $this->artisan('migrate', [
+        $this->artisan('migrate:fresh', [
             '--path' => 'database/migrations/tenant',
             '--database' => 'tenant',
             '--force' => true,
@@ -5037,11 +5056,11 @@ trait SetUpTenantTest
         // For Feature tests (HTTP), we want the Request to trigger initialization, not us.
         // For Unit tests, the test method will manually initialize if needed.
         if (! $this instanceof \Tests\TestCase) {
-             // Keep initialized for Unit tests
+            // Keep initialized for Unit tests
         } else {
-             // We generally want to end it for Feature tests so middleware runs fresh,
-             // BUT stancl/tenancy is smart enough to handle re-ini.
-             // To be safe, let's leave it active as the default state for data seeding.
+            // We generally want to end it for Feature tests so middleware runs fresh,
+            // BUT stancl/tenancy is smart enough to handle re-ini.
+            // To be safe, let's leave it active as the default state for data seeding.
         }
 
         return $tenant;
@@ -5049,7 +5068,7 @@ trait SetUpTenantTest
 
     protected function tearDownTenant(string $tenantId = 'dime'): void
     {
-        $tenantDatabaseName = 'tenant' . $tenantId;
+        $tenantDatabaseName = 'tenant'.$tenantId;
         try {
             // Drop the physical database
             DB::connection('mysql')->statement("DROP DATABASE IF EXISTS `{$tenantDatabaseName}`");
@@ -5850,67 +5869,6 @@ export default {
     },
     plugins: [],
 };
-</file>
-
-<file path="test_generate_qr_batch.php">
-#!/usr/bin/env php
-<?php
-
-require_once 'vendor/autoload.php';
-
-use App\Actions\Tenant\GenerateQrBatchAction;
-use App\Models\Tenant;
-use App\Models\Tenant\CommercialGood;
-use App\Models\Tenant\RewardCode;
-
-// Initialize Laravel
-$app = require_once 'bootstrap/app.php';
-$app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
-
-// Find the dime tenant
-$dime = Tenant::find('dime');
-if (! $dime) {
-    echo "Dime tenant not found\n";
-    exit(1);
-}
-
-// Initialize the dime tenant
-tenancy()->initialize($dime);
-
-// Find a commercial good or create one if none exists
-$good = CommercialGood::first();
-if (! $good) {
-    $good = CommercialGood::create([
-        'sku' => 'TEST-SKU-001',
-        'name' => 'Test Product',
-        'points_awarded' => 100,
-        'msrp_cents' => 10000,
-        'strain_type' => 'hybrid',
-        'is_active' => true,
-        'image_url' => 'https://example.com/test.jpg',
-    ]);
-    echo "Created test commercial good\n";
-}
-
-echo 'Using commercial good: '.$good->name."\n";
-
-// Run the action
-$action = new GenerateQrBatchAction;
-$result = $action->execute($good, 100, 'Test Batch');
-
-echo 'Generated QR batch result: '.$result."\n";
-
-// Check the database
-$count = RewardCode::where('batch_id', 'Test Batch')->count();
-echo 'Number of reward codes in database: '.$count."\n";
-
-if ($count === 100) {
-    echo "✓ Successfully created 100 reward codes in the database\n";
-} else {
-    echo '✗ Expected 100 reward codes, but found '.$count."\n";
-}
-
-echo "Verification completed.\n";
 </file>
 
 <file path="tsconfig.json">
