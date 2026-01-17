@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Stancl\Tenancy\Contracts\TenantWithDatabase;
 use Stancl\Tenancy\Database\Concerns\CentralConnection;
 use Stancl\Tenancy\Database\Concerns\GeneratesIds;
@@ -48,7 +47,7 @@ class Tenant extends Model implements TenantWithDatabase
     /**
      * Get the domains associated with the tenant.
      */
-    public function domains(): HasMany
+    public function domains(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(\Stancl\Tenancy\Database\Models\Domain::class, 'tenant_id');
     }

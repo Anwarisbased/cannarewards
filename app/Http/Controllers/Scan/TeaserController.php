@@ -32,7 +32,7 @@ class TeaserController
         }
 
         if ($rewardCode->status === 'active') {
-            // If active -> Return Inertia::render('Scan/Teaser', ['product' => CommercialGoodData::from($code->commercialGood)]).
+            // If active -> Return Inertia::render('Scan/Teaser', ['product' => CommercialGoodData::from($rewardCode->commercialGood)]).
             return Inertia::render('Scan/Teaser', [
                 'product' => CommercialGoodData::from($rewardCode->commercialGood),
             ]);
